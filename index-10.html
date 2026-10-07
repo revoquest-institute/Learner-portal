@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Revoquest Learner Portal</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<style>
+:root{--bg:#f6f4f0;--card:#fff;--ink:#14181f;--mute:#5b6270;--line:#e3ded5;--brand:#e8922a;--bi:#14181f;--warn:#c0392b;--ok:#1d7a3e;--soft:#fdf0dc}
+a{color:#b8650a}
+.logo{display:block;width:240px;max-width:100%;height:auto}.logo.sm{width:180px}
+.brandbar{background:#fff;border-bottom:4px solid var(--brand);margin:-16px -16px 16px;padding:10px 16px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Trebuchet MS","Segoe UI",system-ui,sans-serif}
+h1,h2,h3{font-family:"Century Gothic","Avenir Next","Trebuchet MS",sans-serif;font-weight:700;margin:0;line-height:1.2}
+button,input,select,textarea{font:inherit}
+.wrap{max-width:860px;margin:0 auto;padding:16px}
+.card,.item{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px}
+.item{border-left:5px solid var(--warn)}.item.done{border-left-color:var(--ok)}
+.auth{max-width:380px;margin:8vh auto}
+label{display:block;margin-top:12px;font-weight:600;font-size:.9rem}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);margin-top:4px}
+.btn{background:var(--brand);color:var(--bi);border:0;border-radius:6px;padding:10px 16px;font-weight:600;cursor:pointer;width:auto}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--ink)}
+.btn[disabled]{opacity:.5}
+.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.meta{color:var(--mute);font-size:.88rem;margin:4px 0 10px}
+.tag{font-size:.8rem;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--soft)}
+.tag.ok{color:var(--ok)}.tag.no{color:var(--warn)}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:8px}
+.sub{border-top:1px dashed var(--line);margin-top:10px;padding-top:10px;font-size:.92rem}
+.err{color:var(--warn);min-height:1.4em;margin-top:8px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:8px}
+textarea.ed{min-height:55vh;font-size:1.05rem;line-height:1.6}
+.qp{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--brand);border-radius:8px;padding:12px 14px;margin-bottom:12px}
+.qp summary{cursor:pointer;font-weight:700;font-family:"Century Gothic","Avenir Next","Trebuchet MS",sans-serif}
+.qp .qt{white-space:pre-wrap;line-height:1.6;margin:10px 0;max-height:45vh;overflow:auto}
+@media (min-width:900px){#editor{max-width:1100px;margin:0 auto}#editor .qp{position:sticky;top:8px}}
+.qb{border:1px solid var(--line);border-radius:8px;margin:12px 0;padding:10px 12px}.qb legend{font-weight:700;padding:0 6px}
+.qb-row{border-top:1px dashed var(--line);margin-top:10px;padding-top:8px}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:12px}
+.qcard .qtext{white-space:pre-wrap;line-height:1.55;margin:6px 0 8px}
+.qcard textarea.ed{min-height:0;margin-top:0}
+.qa{break-inside:avoid;margin-bottom:12px}
+.banner{background:var(--soft);border-left:5px solid var(--brand);padding:10px 14px;border-radius:6px;margin-bottom:12px;font-size:.92rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.live{white-space:pre-wrap;max-height:240px;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px;font-size:.9rem}
+.pg{margin-bottom:24px}
+@media print{body{background:#fff}.noprint,.brandbar{display:none!important}.pg{page-break-after:always;margin:0}.wrap{padding:0;max-width:none}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="rq" viewBox="0 0 530 150">
+<circle cx="72" cy="72" r="63" fill="none" stroke="#14181f" stroke-width="9"/>
+<path d="M98 108 L128 142" stroke="#14181f" stroke-width="11"/>
+<circle cx="72" cy="72" r="50" fill="#fff"/><circle cx="72" cy="72" r="46" fill="#e8922a"/>
+<path d="M52 100 V46 H74 Q95 46 95 63 Q95 80 74 80 H52 M72 80 L96 106" fill="none" stroke="#fff" stroke-width="9" stroke-linejoin="round"/>
+<text x="150" y="84" font-size="52" font-weight="700" font-family="'Century Gothic','Avenir Next','Trebuchet MS',sans-serif" textLength="372" lengthAdjust="spacingAndGlyphs"><tspan fill="#14181f">REVO</tspan><tspan fill="#e8922a">QUEST</tspan></text>
+<text x="152" y="122" font-size="15" font-weight="700" fill="#14181f" font-family="'Century Gothic','Avenir Next','Trebuchet MS',sans-serif" textLength="368" lengthAdjust="spacing">TRAINING INSTITUTE</text>
+</symbol></svg>
+<div class="wrap">
+<div id="setup" class="card" hidden><h2>Setup needed</h2><p>Open index.html and paste your Supabase URL and anon key at the top of the script.</p></div>
+
+<form id="auth" class="card auth" hidden>
+  <svg class="logo" viewBox="0 0 530 150" role="img" aria-label="Revoquest Training Institute" style="margin:0 auto 14px"><use href="#rq" width="530" height="150"/></svg>
+  <h1 id="aT" style="text-align:center;font-size:1.3rem">Learner Portal</h1>
+  <div id="su" hidden>
+    <label for="fn">Full name</label><input id="fn">
+  </div>
+  <label for="em">Email</label><input id="em" type="email" required autocomplete="email">
+  <label for="pw">Password (6+ characters)</label><input id="pw" type="password" required minlength="6" autocomplete="current-password">
+  <div class="err" id="aE"></div>
+  <button class="btn" id="aB" style="width:100%">Sign in</button>
+  <p style="text-align:center"><a href="#" id="aS">New learner? Create an account</a></p>
+  <p style="text-align:center"><a href="#" id="aF">Forgot password?</a></p>
+</form>
+
+<form id="rec" class="card auth" hidden>
+  <svg class="logo" viewBox="0 0 530 150" role="img" aria-label="Revoquest Training Institute" style="margin:0 auto 14px"><use href="#rq" width="530" height="150"/></svg>
+  <h1 style="text-align:center;font-size:1.3rem">Set a new password</h1>
+  <label for="np">New password (6+ characters)</label><input id="np" type="password" required minlength="6" autocomplete="new-password">
+  <div class="err" id="rE"></div>
+  <button class="btn" style="width:100%">Save password</button>
+</form>
+<main id="app" hidden>
+  <div class="brandbar"><svg class="logo sm" viewBox="0 0 530 150" role="img" aria-label="Revoquest Training Institute"><use href="#rq" width="530" height="150"/></svg></div>
+  <div class="top"><div><h2 id="hi"></h2><small id="who" class="meta"></small></div><button class="btn ghost" id="out">Sign out</button></div>
+  <div id="teacher" hidden>
+    <form class="card" id="tf">
+      <h3>Post a new assignment</h3>
+      <label for="tc">Subject</label><input id="tc" required>
+      <label for="tt">Title</label><input id="tt" required>
+      <label for="tb">General instructions (optional)</label><textarea id="tb" rows="3" placeholder="For example: Answer all questions. Time allowed: 2 hours."></textarea>
+      <fieldset class="qb"><legend>Question paper (learners answer online and you watch live)</legend>
+       <p class="meta" style="margin:0 0 8px">Paste all the questions, one per line. Put the marks at the end in brackets, like (5). Tap Build answer spaces, and each question gets its own answer box on the learner's screen. Live watching switches on automatically. If you leave this empty, learners upload a file instead.</p>
+       <textarea id="tqPaste" rows="5" placeholder="1.1 Define quality assurance. (4)&#10;1.2 Explain two risk controls. (6)"></textarea>
+       <div class="row" style="justify-content:flex-start;margin-top:8px"><button type="button" class="btn ghost" id="tqBuild">Build answer spaces</button><button type="button" class="btn ghost" id="tqAdd">Add one question</button></div>
+       <div id="tqList"></div><div class="meta" id="tqSum" style="margin-top:8px"></div>
+      </fieldset>
+      <label for="td">Due date</label><input id="td" type="datetime-local" required>
+      <label for="tf2">Attach a file (optional)</label><input id="tf2" type="file">
+      <button class="btn" style="margin-top:14px" id="tB">Post assignment</button>
+    </form>
+  </div>
+  <div id="list"></div>
+</main>
+<section id="editor" hidden>
+ <div class="top"><div><h2 id="eT"></h2><small class="meta" id="eM"></small></div><button class="btn ghost" id="eBack">Back</button></div>
+ <div class="banner">Your teacher can watch this page live while you write. The portal also counts how many times you paste text or leave this tab. Nothing outside this page is recorded, and there is no camera or microphone.</div>
+ <details class="qp" id="eQ" open><summary>Instructions</summary>
+  <div class="qt" id="eQt"></div>
+  <div class="row" style="justify-content:flex-start" id="eQf" hidden>
+   <button class="btn ghost" id="eQopen" type="button">Open attached file</button>
+   <button class="btn ghost" id="eQdl" type="button">Download attached file</button>
+  </div>
+ </details>
+ <div id="eQs"></div>
+ <div class="row" style="margin-top:10px"><span class="meta" id="eS">Not saved yet</span><button class="btn" id="eSub">Submit my work</button></div>
+</section>
+<section id="prn" hidden>
+ <div class="top noprint"><button class="btn ghost" id="prBack">Back</button><button class="btn" id="prGo">Print / Save as PDF</button></div>
+ <div id="prnBody"></div>
+</section>
+<section id="watch" hidden>
+ <div class="top"><div><h2 id="wT"></h2><small class="meta">Updates live as learners type.</small></div><button class="btn ghost" id="wBack">Back</button></div>
+ <div class="grid" id="wG"></div>
+</section>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+// ====== PASTE YOUR SUPABASE DETAILS HERE (Project Settings > API) ======
+const SUPABASE_URL = "https://sfynxfrrzeimrmlpnwfu.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_bVkE05593udBC907S--emA_grITspAe";
+// =======================================================================
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=d=>new Date(d).toLocaleString(undefined,{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+const safe=n=>n.replace(/[^\w.\-]+/g,'_');
+function toast(m,ms=3000){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,ms)}
+if(!SUPABASE_URL||!SUPABASE_ANON_KEY){$('setup').hidden=false}
+else{
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+let me=null, signup=false, files={};
+
+async function boot(){
+  if(recovering){$('auth').hidden=true;$('app').hidden=true;$('rec').hidden=false;return}
+  const {data:{session}}=await db.auth.getSession();
+  if(!session){$('auth').hidden=false;$('app').hidden=true;return}
+  $('auth').hidden=true;$('app').hidden=false;
+  const {data}=await db.from('profiles').select('*').eq('id',session.user.id).single();
+  me=data||{id:session.user.id,full_name:'',role:'student'};
+  $('hi').textContent='Hi, '+(me.full_name||'there').split(' ')[0];
+  $('who').textContent=me.role==='teacher'?'Teacher':'Learner';
+  $('teacher').hidden=me.role!=='teacher';
+  load();
+}
+
+async function load(){
+  let q=db.from('assignments').select('*').order('due');
+  const {data:tasks,error}=await q;
+  if(error){$('list').innerHTML='<div class="card">Could not load assignments: '+esc(error.message)+'</div>';return}
+  const list=tasks;
+  if(!list.length){$('list').innerHTML='<div class="card" style="text-align:center">No assignments yet.</div>';return}
+  let subs={};
+  if(me.role!=='teacher'){
+    const {data}=await db.from('submissions').select('*').eq('student_id',me.id);
+    (data||[]).forEach(s=>subs[s.assignment_id]=s);
+  }
+  $('list').innerHTML=list.map(t=>me.role==='teacher'?teacherCard(t):studentCard(t,subs[t.id])).join('');
+}
+
+function studentCard(t,s){
+  const late=!s&&new Date(t.due)<new Date();
+  return `<article class="item ${s?'done':''}">
+   <div class="row"><h3>${esc(t.title)}</h3><span class="tag ${s?'ok':'no'}">${s?(s.mark!=null?'Marked':s.late?'Submitted late':'Submitted'):late?'Overdue':'Not submitted'}</span></div>
+   <div class="meta">${esc(t.course)} · Due ${fmt(t.due)}</div>
+   <p style="margin:0 0 12px">${esc(t.brief)}</p>
+   <div class="row" style="justify-content:flex-start">
+    ${t.file_path||!t.live_writing?`<button class="btn ghost" data-dl="${t.id}">Download task</button>`:''}
+    ${t.live_writing?(s?'':`<button class="btn" data-write="${t.id}">Open question paper</button>`):`<input type="file" data-up="${t.id}" style="flex:1;min-width:180px">
+    <button class="btn" data-sub="${t.id}" disabled>${s?'Resubmit':'Submit work'}</button>`}
+   </div>
+   ${s?`<div class="sub">Sent ${fmt(s.submitted_at)}: <b>${esc(s.file_name)}</b>
+     <button class="btn ghost" style="padding:3px 10px;margin-left:6px" data-mine="${s.file_path}" data-name="${esc(s.file_name)}">Download my file</button></div>
+   ${s.mark!=null?`<div class="sub"><b>Mark: ${s.mark}/${s.out_of}</b>${s.feedback?' \u00B7 '+esc(s.feedback):''}${s.marked_file_path?` <button class="btn ghost" style="padding:3px 10px;margin-left:6px" data-mine="${s.marked_file_path}" data-name="${esc(s.marked_file_name)}">Download marked work</button>`:''}</div>`:''}`:''}
+  </article>`;
+}
+function teacherCard(t){
+  return `<article class="item done"><div class="row"><h3>${esc(t.title)}</h3>
+   <span>${t.live_writing?`<button class="btn ghost" data-watch="${t.id}" data-title="${esc(t.title)}">Watch live</button> <button class="btn ghost" data-print="${t.id}">Print answers</button> `:''}<button class="btn ghost" data-view="${t.id}" data-total="${totalMarks(t)}">View submissions</button></span></div>
+   <div class="meta">${esc(t.course)} · Due ${fmt(t.due)}</div>
+   <div id="v-${t.id}"></div></article>`;
+}
+
+function totalMarks(t){return Array.isArray(t.questions)?t.questions.reduce((n,q)=>n+(+q.marks||0),0):0}
+function qtxt(t){return Array.isArray(t.questions)?t.questions.map((q,i)=>'\nQuestion '+(i+1)+(q.marks?' ('+q.marks+' marks)':'')+': '+q.text).join('\n'):''}
+async function signed(bucket,path,name){
+  const {data,error}=await db.storage.from(bucket).createSignedUrl(path,120,{download:name});
+  if(error){toast('Download failed: '+error.message);return}
+  location.href=data.signedUrl;
+}
+
+document.addEventListener('click',async e=>{
+  const g=a=>e.target.closest('['+a+']'); let x;
+  if(x=g('data-dl')){
+    const {data:t}=await db.from('assignments').select('*').eq('id',x.dataset.dl).single();
+    if(t.file_path)return signed('tasks',t.file_path,t.file_name);
+    const url='data:text/plain;charset=utf-8,'+encodeURIComponent(`${t.title}\n${t.course}\nDue: ${fmt(t.due)}\n\n${t.brief||''}\n${qtxt(t)}`);
+    const a=document.createElement('a');a.href=url;a.download=safe(t.title)+'.txt';a.click();
+  }else if(x=g('data-mine')){signed('submissions',x.dataset.mine,x.dataset.name)}
+  else if(x=g('data-sub')){
+    const id=x.dataset.sub,f=files[id]; if(!f)return;
+    x.disabled=true;x.textContent='Uploading…';
+    const path=`${me.id}/${id}/${Date.now()}_${safe(f.name)}`;
+    const up=await db.storage.from('submissions').upload(path,f,{upsert:true});
+    if(up.error){toast('Upload failed: '+up.error.message);x.disabled=false;x.textContent='Submit work';return}
+    const r=await db.from('submissions').upsert({assignment_id:id,student_id:me.id,file_path:path,file_name:f.name,size:f.size},{onConflict:'assignment_id,student_id'});
+    if(r.error){toast('Could not save: '+r.error.message);x.disabled=false;return}
+    delete files[id];toast('Submitted: '+f.name);load();
+  }else if(x=g('data-view')){
+    const box=$('v-'+x.dataset.view);
+    const {data,error}=await db.from('submissions').select('*, profiles(full_name)').eq('assignment_id',x.dataset.view).order('submitted_at');
+    if(error){box.innerHTML='<div class="sub">'+esc(error.message)+'</div>';return}
+    box.innerHTML=data.length?data.map(s=>`<div class="sub">
+      <div class="row"><span><b>${esc(s.profiles?.full_name)}</b> \u00B7 ${fmt(s.submitted_at)} ${s.late?'<span class="tag no">Late</span>':''}${s.mark!=null?` <span class="tag ok">${s.mark}/${s.out_of}</span>`:''}</span>
+      <button class="btn ghost" style="padding:3px 10px" data-mine="${s.file_path}" data-name="${esc(s.file_name)}">Download</button></div>
+      <div class="row" style="justify-content:flex-start;margin-top:8px">
+       <input type="number" id="mk-${s.id}" value="${s.mark??''}" placeholder="Mark" style="width:90px"> /
+       <input type="number" id="of-${s.id}" value="${s.out_of??(+x.dataset.total||100)}" style="width:90px">
+       <input id="fb-${s.id}" value="${esc(s.feedback||'')}" placeholder="Feedback" style="flex:1;min-width:180px">
+       <input type="file" id="mf-${s.id}" style="flex:1;min-width:180px">
+       <button class="btn" data-mark="${s.id}" data-stu="${s.student_id}" data-asg="${s.assignment_id}">Save mark</button></div>
+      ${s.marked_file_name?`<small class="meta">Marked file returned: ${esc(s.marked_file_name)}</small>`:''}</div>`).join(''):'<div class="sub">No submissions yet.</div>';
+  }
+});
+document.addEventListener('change',e=>{
+  const id=e.target.dataset.up; if(!id)return;
+  const f=e.target.files[0]; if(!f)return;
+  if(f.size>20*1024*1024){toast('File is over 20 MB.');e.target.value='';return}
+  files[id]=f;document.querySelector(`[data-sub="${id}"]`).disabled=false;
+});
+
+// ---- live writing ----
+let ses=null,saveT=null,ch=null,tick=null,names={},sess={};
+const wc=s=>(s.trim().match(/\S+/g)||[]).length;
+const wcS=s=>Array.isArray(s.answers)?s.answers.reduce((n,x)=>n+wc(x||''),0):wc(s.content||'');
+const answersNow=()=>[...document.querySelectorAll('#eQs textarea')].map(t=>t.value);
+const totalWords=a=>a.reduce((n,x)=>n+wc(x||''),0);
+const mkTxt=q=>q.marks?' ('+q.marks+' marks)':'';
+function buildContent(a){return ses.q?ses.q.map((q,i)=>'Question '+(i+1)+mkTxt(q)+'\n'+(a[i]||'')).join('\n\n'):(a[0]||'')}
+function buildFile(a){return ses.q?ses.q.map((q,i)=>'Question '+(i+1)+mkTxt(q)+': '+q.text+'\n\nAnswer:\n'+(a[i]||'')).join('\n\n----------\n\n'):(a[0]||'')}
+async function saveNow(status='writing'){
+  if(!ses)return true; clearTimeout(saveT);
+  const ans=answersNow(),row={assignment_id:ses.id,student_id:me.id,content:buildContent(ans),paste_count:ses.paste,tab_switches:ses.tabs,status};
+  if(ses.q)row.answers=ans;
+  const r=await db.from('writing_sessions').upsert(row,{onConflict:'assignment_id,student_id'});
+  if(r.error){$('eS').textContent='Not saved: '+r.error.message;return false}
+  $('eS').textContent='Saved '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+' · '+totalWords(ans)+' words';return true;
+}
+function queue(){if(!ses)return;$('eS').textContent='Saving…';clearTimeout(saveT);saveT=setTimeout(()=>saveNow(),1200)}
+async function openEditor(id){
+  const {data:t}=await db.from('assignments').select('*').eq('id',id).single();
+  const {data:s}=await db.from('writing_sessions').select('*').eq('assignment_id',id).eq('student_id',me.id).maybeSingle();
+  if(s&&s.status==='submitted'){toast('You already submitted this.');return}
+  const q=Array.isArray(t.questions)&&t.questions.length?t.questions:null;
+  ses={id,title:t.title,q,paste:s?.paste_count||0,tabs:s?.tab_switches||0,fp:t.file_path,fn:t.file_name};
+  $('eQt').textContent=t.brief||'';
+  $('eQf').hidden=!t.file_path;$('eQ').hidden=!(t.brief||t.file_path);$('eQ').open=true;
+  const tm=totalMarks(t);
+  $('eT').textContent=t.title;$('eM').textContent=t.course+' · Due '+fmt(t.due)+(tm?' · Total '+tm+' marks':'');
+  const ans=Array.isArray(s?.answers)?s.answers:[],rows={short:4,medium:9,long:18};
+  $('eQs').innerHTML=q?q.map((x,i)=>`<div class="qcard"><div class="row"><b>Question ${i+1}</b>${x.marks?`<span class="tag">${x.marks} marks</span>`:''}</div>
+    <div class="qtext">${esc(x.text)}</div>
+    <textarea class="ed" rows="${rows[x.size]||9}" aria-label="Answer to question ${i+1}" >${esc(ans[i]||'')}</textarea></div>`).join('')
+   :`<label for="eTx" style="margin:0 0 4px">Your answer</label><textarea class="ed" id="eTx" >${esc(s?.content||'')}</textarea>`;
+  $('eS').textContent=s?'Saved':'Not saved yet';$('eSub').disabled=false;
+  $('app').hidden=true;$('editor').hidden=false;
+  if(!s)saveNow();
+}
+$('eQopen').onclick=async()=>{if(!ses?.fp)return;const {data,error}=await db.storage.from('tasks').createSignedUrl(ses.fp,300);if(error){toast('Could not open: '+error.message);return}window.open(data.signedUrl,'_blank')};
+$('eQdl').onclick=()=>{if(ses?.fp)signed('tasks',ses.fp,ses.fn)};
+$('eQs').addEventListener('input',queue);
+$('eQs').addEventListener('paste',()=>{if(ses){ses.paste++;queue()}});
+document.addEventListener('visibilitychange',()=>{if(ses&&document.hidden){ses.tabs++;saveNow()}});
+$('eBack').onclick=async()=>{await saveNow();ses=null;$('editor').hidden=true;$('app').hidden=false;load()};
+$('eSub').onclick=async()=>{
+  const ans=answersNow(); if(!totalWords(ans)){toast('Write something first.');return}
+  const text=buildFile(ans),blank=ses.q?ans.filter(x=>!x.trim()).length:0;
+  if(!confirm((blank?blank+' question(s) are still blank. ':'')+'Submit your work? You cannot edit it after this.'))return;
+  $('eSub').disabled=true;
+  const name=safe(ses.title)+'.txt',path=`${me.id}/${ses.id}/${Date.now()}_${name}`,f=new Blob([text],{type:'text/plain'});
+  const up=await db.storage.from('submissions').upload(path,f,{upsert:true});
+  if(up.error){toast('Upload failed: '+up.error.message);$('eSub').disabled=false;return}
+  const r=await db.from('submissions').upsert({assignment_id:ses.id,student_id:me.id,file_path:path,file_name:name,size:f.size},{onConflict:'assignment_id,student_id'});
+  if(r.error){toast(r.error.message);$('eSub').disabled=false;return}
+  await saveNow('submitted');ses=null;$('editor').hidden=true;$('app').hidden=false;toast('Submitted');load();
+};
+const PL=3,TL=5; // alert when a learner pastes PL times or leaves the tab TL times
+const flagged=s=>s.paste_count>=PL||s.tab_switches>=TL;
+function wcard(s){
+  const p=names[s.student_id]||{},idle=Date.now()-new Date(s.updated_at)>60000;
+  const st=s.status==='submitted'?['Submitted','ok']:idle?['Idle','no']:['Writing now','ok'];
+  return `<article class="card" id="c-${s.student_id}" ${flagged(s)?'style="border:2px solid var(--warn)"':''}><div class="row"><b>${esc(p.full_name||'Learner')}</b><span>${flagged(s)?'<span class="tag no">\u26A0 Check this work</span> ':''}<span class="tag ${st[1]}">${st[0]}</span></span></div>
+  <div class="meta">${wcS(s)} words · pasted ${s.paste_count}× · left tab ${s.tab_switches}× · ${fmt(s.updated_at)}</div>
+  <div class="live">${esc(s.content)||'(nothing yet)'}</div></article>`;
+}
+function drawWatch(){
+  const a=Object.values(sess).sort((x,y)=>flagged(y)-flagged(x));
+  $('wG').innerHTML=a.length?a.map(wcard).join(''):'<div class="card">No learner has started yet.</div>';
+  document.querySelectorAll('.live').forEach(l=>l.scrollTop=l.scrollHeight);
+}
+async function openWatch(id,title){
+  $('wT').textContent=title;$('app').hidden=true;$('watch').hidden=false;
+  const {data:ps}=await db.from('profiles').select('id,full_name');
+  names={};(ps||[]).forEach(p=>names[p.id]=p);
+  const {data}=await db.from('writing_sessions').select('*').eq('assignment_id',id);
+  sess={};(data||[]).forEach(s=>sess[s.student_id]=s);drawWatch();
+  ch=db.channel('w-'+id).on('postgres_changes',{event:'*',schema:'public',table:'writing_sessions',filter:'assignment_id=eq.'+id},pl=>{
+    const s=pl.new;if(s&&s.student_id){const was=sess[s.student_id];if(flagged(s)&&!(was&&flagged(was)))toast('\u26A0 '+(names[s.student_id]?.full_name||'A learner')+': pasted '+s.paste_count+'\u00D7, left tab '+s.tab_switches+'\u00D7',9000);sess[s.student_id]=s;drawWatch()}}).subscribe();
+  tick=setInterval(drawWatch,20000);
+}
+async function saveMark(b){
+  const id=b.dataset.mark,f=$('mf-'+id).files[0],mk=$('mk-'+id).value;
+  if(mk===''){toast('Enter a mark first.');return}
+  b.disabled=true;
+  const upd={mark:+mk,out_of:+$('of-'+id).value||100,feedback:$('fb-'+id).value,marked_at:new Date().toISOString()};
+  if(f){const path=`${b.dataset.stu}/${b.dataset.asg}/marked_${Date.now()}_${safe(f.name)}`;
+    const up=await db.storage.from('submissions').upload(path,f,{upsert:true});
+    if(up.error){toast('Upload failed: '+up.error.message);b.disabled=false;return}
+    upd.marked_file_path=path;upd.marked_file_name=f.name}
+  const r=await db.from('submissions').update(upd).eq('id',id);
+  b.disabled=false;toast(r.error?r.error.message:'Mark saved');
+}
+async function openPrint(id){
+  const {data:t}=await db.from('assignments').select('*').eq('id',id).single();
+  const {data:ps}=await db.from('profiles').select('id,full_name');
+  const nm={};(ps||[]).forEach(p=>nm[p.id]=p);
+  const {data}=await db.from('writing_sessions').select('*').eq('assignment_id',id);
+  const list=(data||[]).sort((a,b)=>(nm[a.student_id]?.full_name||'').localeCompare(nm[b.student_id]?.full_name||''));
+  const qs=Array.isArray(t.questions)&&t.questions.length?t.questions:null,tm=totalMarks(t);
+  $('prnBody').innerHTML=list.length?list.map(s=>{const p=nm[s.student_id]||{},ans=Array.isArray(s.answers)?s.answers:[];
+    const body=qs&&ans.length?qs.map((q,i)=>`<div class="qa"><p><b>Question ${i+1}</b>${q.marks?' ('+q.marks+' marks)':''}: ${esc(q.text)}</p><div style="white-space:pre-wrap;line-height:1.6;border-left:3px solid #999;padding-left:10px">${esc(ans[i]||'')||'(no answer)'}</div><p>Mark: ______ / ${q.marks||'______'}</p></div>`).join('')+`<hr><p><b>Total: ______ / ${tm||'______'}</b></p>`
+      :`<hr><div style="white-space:pre-wrap;line-height:1.6">${esc(s.content)||'(no answer)'}</div><hr><p>Mark: ______ / ______</p>`;
+    return `<section class="pg"><h2>${esc(t.title)}</h2><p>${esc(t.course)} · Due ${fmt(t.due)}</p>
+    <p><b>${esc(p.full_name)}</b><br>${s.status==='submitted'?'Submitted':'NOT SUBMITTED (draft)'} · ${wcS(s)} words · pasted ${s.paste_count}× · left tab ${s.tab_switches}×</p>${body}</section>`}).join(''):'<p>No answers yet.</p>';
+  $('app').hidden=true;$('prn').hidden=false;
+}
+$('prBack').onclick=()=>{$('prn').hidden=true;$('app').hidden=false};
+$('prGo').onclick=()=>window.print();
+$('wBack').onclick=()=>{if(ch)db.removeChannel(ch);clearInterval(tick);$('watch').hidden=true;$('app').hidden=false};
+document.addEventListener('click',e=>{
+  let x=e.target.closest('[data-write]');if(x)openEditor(x.dataset.write);
+  x=e.target.closest('[data-watch]');if(x)openWatch(x.dataset.watch,x.dataset.title);
+  x=e.target.closest('[data-mark]');if(x)saveMark(x);
+  x=e.target.closest('[data-print]');if(x)openPrint(x.dataset.print);
+});
+$('aS').onclick=e=>{e.preventDefault();signup=!signup;$('su').hidden=!signup;
+  $('aB').textContent=signup?'Create account':'Sign in';
+  $('aS').textContent=signup?'Have an account? Sign in':'New learner? Create an account';$('aE').textContent=''};
+$('auth').onsubmit=async e=>{
+  e.preventDefault();$('aE').textContent='';
+  const email=$('em').value.trim(),password=$('pw').value;
+  const r=signup
+   ?await db.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname,data:{full_name:$('fn').value.trim()}}})
+   :await db.auth.signInWithPassword({email,password});
+  if(r.error){$('aE').textContent=r.error.message;return}
+  if(signup&&!r.data.session){$('aE').textContent='Check your email to confirm, then sign in.';return}
+  boot();
+};
+$('out').onclick=async()=>{await db.auth.signOut();me=null;boot()};
+
+// ---- question paper builder ----
+let QB=[];
+const sumQB=()=>{$('tqSum').textContent=QB.length?QB.length+' question(s) \u00B7 '+QB.reduce((n,q)=>n+(+q.marks||0),0)+' marks in total':''};
+function drawQB(){
+  $('tqList').innerHTML=QB.map((q,i)=>`<div class="qb-row"><div class="row"><b>Question ${i+1}</b><button type="button" class="btn ghost" style="padding:2px 10px" data-qrm="${i}">Remove</button></div>
+   <textarea rows="2" data-qf="text" data-qi="${i}" placeholder="Type the question">${esc(q.text)}</textarea>
+   <div class="row" style="justify-content:flex-start"><label style="margin:0">Marks <input type="number" min="0" data-qf="marks" data-qi="${i}" value="${q.marks}" style="width:80px"></label>
+   <label style="margin:0">Answer space <select data-qf="size" data-qi="${i}"><option value="short"${q.size==='short'?' selected':''}>Short</option><option value="medium"${q.size==='medium'?' selected':''}>Medium</option><option value="long"${q.size==='long'?' selected':''}>Long</option></select></label></div></div>`).join('');
+  sumQB();
+}
+$('tqBuild').onclick=()=>{
+  const lines=$('tqPaste').value.split('\n').map(x=>x.trim()).filter(Boolean);
+  if(!lines.length){toast('Paste the questions first, one per line.');return}
+  lines.forEach(l=>{const m=l.match(/[\(\[]\s*(\d+)\s*(?:marks?)?\s*[\)\]]\s*$/i);
+    QB.push({text:m?l.slice(0,m.index).trim():l,marks:m?+m[1]:'',size:'medium'})});
+  $('tqPaste').value='';drawQB();
+};
+$('tqAdd').onclick=()=>{QB.push({text:'',marks:'',size:'medium'});drawQB()};
+const qbEdit=e=>{const t=e.target,i=t.dataset.qi,f=t.dataset.qf;if(f==null||!QB[i])return;QB[i][f]=f==='marks'?(t.value===''?'':+t.value):t.value;sumQB()};
+$('tqList').addEventListener('input',qbEdit);$('tqList').addEventListener('change',qbEdit);
+$('tqList').addEventListener('click',e=>{const b=e.target.closest('[data-qrm]');if(b){QB.splice(+b.dataset.qrm,1);drawQB()}});
+$('tf').onsubmit=async e=>{
+  e.preventDefault();$('tB').disabled=true;
+  let file_path=null,file_name=null;const f=$('tf2').files[0];
+  if(f){file_path=`${Date.now()}_${safe(f.name)}`;file_name=f.name;
+    const up=await db.storage.from('tasks').upload(file_path,f);
+    if(up.error){toast('Upload failed: '+up.error.message);$('tB').disabled=false;return}}
+  const questions=QB.filter(q=>q.text.trim()).map(q=>({text:q.text.trim(),marks:+q.marks||0,size:q.size||'medium'}));
+  const row={course:$('tc').value,title:$('tt').value,brief:$('tb').value,
+    due:new Date($('td').value).toISOString(),file_path,file_name,live_writing:questions.length>0};
+  if(questions.length)row.questions=questions;
+  const r=await db.from('assignments').insert(row);
+  $('tB').disabled=false;
+  if(r.error){toast(r.error.message);return}
+  $('tf').reset();QB=[];drawQB();toast('Assignment posted');load();
+};
+let recovering=location.hash.includes('type=recovery');
+if(/error_description=/.test(location.hash)){$('aE').textContent='That reset link has expired or was already used. Type your email and tap Forgot password? for a new one.';history.replaceState(null,'',location.pathname)}
+db.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY'){recovering=true;$('auth').hidden=true;$('app').hidden=true;$('rec').hidden=false}});
+$('aF').onclick=async e=>{e.preventDefault();const email=$('em').value.trim();
+  if(!email){$('aE').textContent='Type your email above first, then tap Forgot password.';return}
+  const r=await db.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+  $('aE').textContent=r.error?r.error.message:'If that email has an account, a reset link is on its way. Check your inbox and spam.'};
+$('rec').onsubmit=async e=>{e.preventDefault();const r=await db.auth.updateUser({password:$('np').value});
+  if(r.error){$('rE').textContent=r.error.message;return}
+  recovering=false;$('rec').hidden=true;history.replaceState(null,'',location.pathname);toast('Password updated');boot()};
+boot();
+}
+</script>
+</body>
+</html>
